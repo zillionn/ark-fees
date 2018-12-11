@@ -72,6 +72,10 @@ a {
       return data.reverse()
     }
 
+    function formatDate(timestamp) {
+      return new Date(timestamp.human).toLocaleString()
+    }
+
     function formatFee(fee) {
       return (+fee / 1e8).toLocaleString('en', {
         minimumFractionDigits: 0,
@@ -237,14 +241,14 @@ a {
 
     <div id="chart0" class="chart"></div>
     <script>
-      TX_TYPES[0].txs = getTransactions(0, TX_TYPES[0].limit)
-
-      TX_TYPES[0].txs.then((data) => {
-        const option = default_option
+      getTransactions(0, TX_TYPES[0].limit).then((data) => {
+        let option = Object.assign({}, default_option)
+        option.xAxis.data = []
+        option.series[0].data = []
         option.title.text = `ARK ${TX_TYPES[0].label} Fees`
 
         data.forEach(tx => {
-          const date = new Date(tx.timestamp.human).toLocaleString()
+          const date = formatDate(tx.timestamp)
           const fee = formatFee(tx.fee)
           option.xAxis.data.push(date)
           option.series[0].data.push(fee)
@@ -253,6 +257,7 @@ a {
         document.getElementById('loading').style.display = 'none'
         document.getElementById('content').style.display = 'block'
 
+        console.log('0 option', option.series[0].data.length)
         echarts
           .init(document.getElementById('chart0'))
           .setOption(option)
@@ -261,14 +266,14 @@ a {
 
     <div id="chart3" class="chart"></div>
     <script>
-      TX_TYPES[3].txs = getTransactions(3, TX_TYPES[3].limit)
-
-      TX_TYPES[3].txs.then((data) => {
-        const option = default_option
+      getTransactions(3, TX_TYPES[3].limit).then((data) => {
+        let option = Object.assign({}, default_option)
+        option.xAxis.data = []
+        option.series[0].data = []
         option.title.text = `ARK ${TX_TYPES[3].label} Fees`
 
         data.forEach(tx => {
-          const date = new Date(tx.timestamp.human).toLocaleString()
+          const date = formatDate(tx.timestamp)
           const fee = formatFee(tx.fee)
           option.xAxis.data.push(date)
           option.series[0].data.push(fee)
@@ -282,14 +287,14 @@ a {
 
     <div id="chart1" class="chart"></div>
     <script>
-      TX_TYPES[1].txs = getTransactions(1, TX_TYPES[1].limit)
-
-      TX_TYPES[1].txs.then((data) => {
-        const option = default_option
+      getTransactions(1, TX_TYPES[1].limit).then((data) => {
+        let option = Object.assign({}, default_option)
+        option.xAxis.data = []
+        option.series[0].data = []
         option.title.text = `ARK ${TX_TYPES[1].label} Fees`
 
         data.forEach(tx => {
-          const date = new Date(tx.timestamp.human).toLocaleString()
+          const date = formatDate(tx.timestamp)
           const fee = formatFee(tx.fee)
           option.xAxis.data.push(date)
           option.series[0].data.push(fee)
@@ -303,14 +308,14 @@ a {
 
     <div id="chart2" class="chart"></div>
     <script>
-      TX_TYPES[2].txs = getTransactions(2, TX_TYPES[2].limit)
-
-      TX_TYPES[2].txs.then((data) => {
-        const option = default_option
+      getTransactions(2, TX_TYPES[2].limit).then((data) => {
+        let option = Object.assign({}, default_option)
+        option.xAxis.data = []
+        option.series[0].data = []
         option.title.text = `ARK ${TX_TYPES[2].label} Fees`
 
         data.forEach(tx => {
-          const date = new Date(tx.timestamp.human).toLocaleString()
+          const date = formatDate(tx.timestamp)
           const fee = formatFee(tx.fee)
           option.xAxis.data.push(date)
           option.series[0].data.push(fee)
