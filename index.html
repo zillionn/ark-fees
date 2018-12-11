@@ -225,6 +225,7 @@ a {
         ]
       }
 
+      // Transfer fees
       let type = 0
       let txs = getTransactions(type, TX_TYPES[type].limit)
       option.title.text = `ARK ${TX_TYPES[type].label} Fees`
@@ -247,6 +248,8 @@ a {
         const feesChart = echarts.init(document.getElementById('fees-chart'))
         feesChart.setOption(option)
       })
+      // end
+
     </script>
 
     <div id="arkio"><a href="https://ark.io" target="_blank">ark.io</a></div>
