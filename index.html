@@ -27,12 +27,12 @@ a {
 }
 #arkio {
   text-align: center;
-  padding-top: 30px;
+  padding: 20px;
 }
 .chart {
   width: 100%;
   height: 400px;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 }
 </style>
 
@@ -70,6 +70,13 @@ a {
       }
 
       return data.reverse()
+    }
+
+    function formatFee(fee) {
+      return (+fee / 1e8).toLocaleString('en', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 8,
+      })
     }
 
     const default_option = {
@@ -239,10 +246,7 @@ a {
 
         data.forEach(tx => {
           const date = new Date(tx.timestamp.human).toLocaleString()
-          const fee = (+tx.fee / 1e8).toLocaleString('en', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 8,
-          })
+          const fee = formatFee(tx.fee)
           option.xAxis.data.push(date)
           option.series[0].data.push(fee)
         })
@@ -252,6 +256,28 @@ a {
 
         echarts
           .init(document.getElementById('chart0'))
+          .setOption(option)
+      })
+    </script>
+
+    <div id="chart3" class="chart"></div>
+    <script>
+      TX_TYPES[3].txs = getTransactions(3, TX_TYPES[3].limit)
+
+      TX_TYPES[3].txs.then((data) => {
+        const option = default_option
+        option.title.text = `ARK ${TX_TYPES[3].label} Fees`
+        option.series[0].name = TX_TYPES[3].label
+
+        data.forEach(tx => {
+          const date = new Date(tx.timestamp.human).toLocaleString()
+          const fee = formatFee(tx.fee)
+          option.xAxis.data.push(date)
+          option.series[0].data.push(fee)
+        })
+
+        echarts
+          .init(document.getElementById('chart3'))
           .setOption(option)
       })
     </script>
@@ -267,16 +293,35 @@ a {
 
         data.forEach(tx => {
           const date = new Date(tx.timestamp.human).toLocaleString()
-          const fee = (+tx.fee / 1e8).toLocaleString('en', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 8,
-          })
+          const fee = formatFee(tx.fee)
           option.xAxis.data.push(date)
           option.series[0].data.push(fee)
         })
 
         echarts
           .init(document.getElementById('chart1'))
+          .setOption(option)
+      })
+    </script>
+
+    <div id="chart2" class="chart"></div>
+    <script>
+      TX_TYPES[2].txs = getTransactions(2, TX_TYPES[2].limit)
+
+      TX_TYPES[2].txs.then((data) => {
+        const option = default_option
+        option.title.text = `ARK ${TX_TYPES[2].label} Fees`
+        option.series[0].name = TX_TYPES[2].label
+
+        data.forEach(tx => {
+          const date = new Date(tx.timestamp.human).toLocaleString()
+          const fee = formatFee(tx.fee)
+          option.xAxis.data.push(date)
+          option.series[0].data.push(fee)
+        })
+
+        echarts
+          .init(document.getElementById('chart2'))
           .setOption(option)
       })
     </script>
