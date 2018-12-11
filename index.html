@@ -3,6 +3,35 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ARK Network Fees</title>
+
+<style type="text/css">
+body {
+  margin: 0;
+  padding: 1em;
+  background: #fff;
+  font-family: Proxima Nova Regular,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  color: #000;
+}
+a {
+  color: #ef192d;
+}
+#loading {
+  width: 100%;
+  height: 70%;
+}
+#loading svg {
+  height: 200px;
+  text-align: center;
+}
+#content {
+  display: none;
+}
+#arkio {
+  text-align: center;
+  padding-top: 30px;
+}
+</style>
+
   <script src="echarts.min.js"></script>
   <script src="https://unpkg.com/@arkecosystem/client/dist/index.umd.js"></script>
   <script>
@@ -10,109 +39,217 @@
     const ARK = new ArkEcosystemClient(API_HOST, 2)
   </script>
   <script>
-    const TX_TYPES = [
-      'Transfer',
-      'Second signature',
-      'Delegate registration',
-      'Vote',
-      'Multi signature',
-    ]
+    const TX_TYPES = []
+    TX_TYPES[0] = { label: 'Transfer', limit: 500 }
+    TX_TYPES[1] = { label: 'Second signature', limit: 100 }
+    TX_TYPES[2] = { label: 'Delegate registration', limit: 100 }
+    TX_TYPES[3] = { label: 'Vote', limit: 100 }
 
-    async function getTransactions(type, limit, page) {
-      const url = 'transactions?'
-        + (type  ? 'type='+type    : '')
-        + (limit ? '&limit='+limit : '')
-        + (page  ? '&page='+page    : '')
+    async function getTransactions(type, limit) {
+      const pages = (limit > 100) ? Math.ceil(limit / 100) : 1
+      limit = (limit > 100) ? 100 : limit
+      let data = []
 
-      console.log(`Querying API for: /${url}`)
-      try {
-        const response = await ARK.http.get(url)
-        return {
-          data: (response.data.meta.count ? response.data.data : {})
+      for(let page = 1; page <= pages; page++) {
+        const url = `transactions?limit=${limit}&page=${page}`
+          + (type >= 0 ? '&type=' + type : '')
+
+        console.log(`Querying API: ${API_HOST}/api/v2/${url}`)
+        try {
+          const response = await ARK.http.get(url)
+          if(response.data.meta.count) {
+            data = data.concat(response.data.data);
+          }
+        } catch (e) {
+          console.error(`Can't get data from: ${API_HOST}/api/v2/${url}`, e)
         }
-      } catch(e) {
-        console.error(`Can't get data for: /${url}`, e)
       }
+
+      return data.reverse()
     }
   </script>
 </head>
-<body style="margin: 0; padding: 1em; background: #fff;">
-  <div id="fees-chart" style="width: 100%; height: 400px;"></div>
-  <script>
-    let option = {
-      tooltip: {
-        trigger: 'axis',
-        position: function (pt) {
-          return [pt[0]-85, '10%'];
-        }
-      },
-      title: {
-        left: 'center',
-        text: 'ARK Network Fees',
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: { title: 'Save' }
-        }
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: []
-      },
-      yAxis: {
-        type: 'value',
-        boundaryGap: [0, '100%']
-      },
-      dataZoom: [{
-        type: 'inside',
-        start: 50,
-        end: 100
-      }, {
-        start: 50,
-        end: 100,
-        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-        handleSize: '80%',
-        handleStyle: {
-          color: '#fff',
-          shadowBlur: 3,
-          shadowColor: 'rgba(0, 0, 0, 0.6)',
-          shadowOffsetX: 2,
-          shadowOffsetY: 2
-        }
-      }],
-      series: [
-        {
-          name: 'Transfer',
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          sampling: 'average',
-          itemStyle: {
-            color: 'rgb(255, 70, 131)'
-          },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-              offset: 0,
-              color: 'rgb(255, 158, 68)'
-            }, {
-              offset: 1,
-              color: 'rgb(255, 70, 131)'
-            }])
-          },
-          data: []
-        }
-      ]
-    }
+<body>
+  <div id="loading">
+    <svg class="lds-spinner" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+      viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+      <g transform="rotate(0 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.9166666666666666s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(30 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.8333333333333334s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(60 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.75s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(90 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.6666666666666666s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(120 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5833333333333334s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(150 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(180 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.4166666666666667s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(210 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.3333333333333333s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(240 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.25s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(270 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.16666666666666666s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(300 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.08333333333333333s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+      <g transform="rotate(330 50 50)">
+        <rect x="47" y="24" rx="9.4" ry="4.8" width="6" height="12" fill="#ef192d">
+          <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animate>
+        </rect>
+      </g>
+    </svg>
+  </div>
 
-    const txs = getTransactions(0)
-    txs.then((data) => {
-      console.log(data)
-      option.xAxis.data = ['11/Dec/2018 10:58:00', '11/Dec/2018 10:58:32', '11/Dec/2018 11:10:12', '11/Dec/2018 11:15:54', '11/Dec/2018 11:18:20', '11/Dec/2018 11:45:44', '11/Dec/2018 12:14:16', '11/Dec/2018 12:34:30', '11/Dec/2018 12:55:12', '11/Dec/2018 13:33:30']
-      option.series[0].data = [0.01, 0.01, 0.01, 0.001, 0.00093, 0.00145, 0.002243, 0.005423, 0.0034563, 0.009345]
-      var feesChart = echarts.init(document.getElementById('fees-chart'))
-      feesChart.setOption(option)
-    })
-  </script>
+  <div id="content">
+    <div id="fees-chart" style="width: 100%; height: 400px;"></div>
+    <script>
+      let option = {
+        tooltip: {
+          trigger: 'axis',
+          position: function (pt) {
+            return [pt[0]-85, '10%'];
+          }
+        },
+        title: {
+          left: 'center',
+          text: 'Fees',
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: { title: 'Save' }
+          }
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: []
+        },
+        yAxis: {
+          type: 'value',
+          boundaryGap: [0, '100%']
+        },
+        dataZoom: [{
+          type: 'inside',
+          start: 90,
+          end: 100
+        }, {
+          start: 90,
+          end: 100,
+          handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+          handleSize: '80%',
+          handleStyle: {
+            color: '#fff',
+            shadowBlur: 3,
+            shadowColor: 'rgba(0, 0, 0, 0.6)',
+            shadowOffsetX: 2,
+            shadowOffsetY: 2
+          }
+        }],
+        series: [
+          {
+            name: '',
+            type: 'line',
+            smooth: true,
+            symbol: 'none',
+            sampling: 'average',
+            itemStyle: {
+              color: 'rgb(255, 25, 45)'
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgb(200, 25, 45)'
+              }, {
+                offset: 1,
+                color: 'rgb(255, 25, 45)'
+              }])
+            },
+            data: []
+          },
+          {
+            name: '',
+            type: 'line',
+            smooth: true,
+            symbol: 'none',
+            sampling: 'average',
+            itemStyle: {
+              color: 'rgb(255, 25, 45)'
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgb(200, 25, 45)'
+              }, {
+                offset: 1,
+                color: 'rgb(255, 25, 45)'
+              }])
+            },
+            data: []
+          }
+        ]
+      }
+
+      let type = 0
+      let txs = getTransactions(type, TX_TYPES[type].limit)
+      option.title.text = `ARK ${TX_TYPES[type].label} Fees`
+
+      txs.then((data) => {
+        option.series[type].name = TX_TYPES[type].label
+        data.forEach(tx => {
+          const date = new Date(tx.timestamp.human).toLocaleString()
+          const fee = (+tx.fee / 1e8).toLocaleString('en', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 8,
+          })
+          option.xAxis.data.push(date)
+          option.series[type].data.push(fee)
+        })
+
+        document.getElementById('loading').style.display = 'none'
+        document.getElementById('content').style.display = 'block'
+
+        const feesChart = echarts.init(document.getElementById('fees-chart'))
+        feesChart.setOption(option)
+      })
+    </script>
+
+    <div id="arkio"><a href="https://ark.io" target="_blank">ark.io</a></div>
+  </div>
 </body>
 </html>
