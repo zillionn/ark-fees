@@ -1,0 +1,118 @@
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARK Network Fees</title>
+  <script src="echarts.min.js"></script>
+  <script src="https://unpkg.com/@arkecosystem/client/dist/index.umd.js"></script>
+  <script>
+    const API_HOST = 'https://explorer.ark.io'
+    const ARK = new ArkEcosystemClient(API_HOST, 2)
+  </script>
+  <script>
+    const TX_TYPES = [
+      'Transfer',
+      'Second signature',
+      'Delegate registration',
+      'Vote',
+      'Multi signature',
+    ]
+
+    async function getTransactions(type, limit, page) {
+      const url = 'transactions?'
+        + (type  ? 'type='+type    : '')
+        + (limit ? '&limit='+limit : '')
+        + (page  ? '&page='+page    : '')
+
+      console.log(`Querying API for: /${url}`)
+      try {
+        const response = await ARK.http.get(url)
+        return {
+          data: (response.data.meta.count ? response.data.data : {})
+        }
+      } catch(e) {
+        console.error(`Can't get data for: /${url}`, e)
+      }
+    }
+  </script>
+</head>
+<body style="margin: 0; padding: 1em; background: #fff;">
+  <div id="fees-chart" style="width: 100%; height: 400px;"></div>
+  <script>
+    let option = {
+      tooltip: {
+        trigger: 'axis',
+        position: function (pt) {
+          return [pt[0]-85, '10%'];
+        }
+      },
+      title: {
+        left: 'center',
+        text: 'ARK Network Fees',
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: { title: 'Save' }
+        }
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: []
+      },
+      yAxis: {
+        type: 'value',
+        boundaryGap: [0, '100%']
+      },
+      dataZoom: [{
+        type: 'inside',
+        start: 50,
+        end: 100
+      }, {
+        start: 50,
+        end: 100,
+        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+        handleSize: '80%',
+        handleStyle: {
+          color: '#fff',
+          shadowBlur: 3,
+          shadowColor: 'rgba(0, 0, 0, 0.6)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2
+        }
+      }],
+      series: [
+        {
+          name: 'Transfer',
+          type: 'line',
+          smooth: true,
+          symbol: 'none',
+          sampling: 'average',
+          itemStyle: {
+            color: 'rgb(255, 70, 131)'
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+              offset: 0,
+              color: 'rgb(255, 158, 68)'
+            }, {
+              offset: 1,
+              color: 'rgb(255, 70, 131)'
+            }])
+          },
+          data: []
+        }
+      ]
+    }
+
+    const txs = getTransactions(0)
+    txs.then((data) => {
+      console.log(data)
+      option.xAxis.data = ['11/Dec/2018 10:58:00', '11/Dec/2018 10:58:32', '11/Dec/2018 11:10:12', '11/Dec/2018 11:15:54', '11/Dec/2018 11:18:20', '11/Dec/2018 11:45:44', '11/Dec/2018 12:14:16', '11/Dec/2018 12:34:30', '11/Dec/2018 12:55:12', '11/Dec/2018 13:33:30']
+      option.series[0].data = [0.01, 0.01, 0.01, 0.001, 0.00093, 0.00145, 0.002243, 0.005423, 0.0034563, 0.009345]
+      var feesChart = echarts.init(document.getElementById('fees-chart'))
+      feesChart.setOption(option)
+    })
+  </script>
+</body>
+</html>
