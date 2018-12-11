@@ -123,7 +123,7 @@ a {
       }],
       series: [
         {
-          name: '',
+          name: 'Fee',
           type: 'line',
           smooth: true,
           symbol: 'none',
@@ -242,7 +242,6 @@ a {
       TX_TYPES[0].txs.then((data) => {
         const option = default_option
         option.title.text = `ARK ${TX_TYPES[0].label} Fees`
-        option.series[0].name = TX_TYPES[0].label
 
         data.forEach(tx => {
           const date = new Date(tx.timestamp.human).toLocaleString()
@@ -267,7 +266,6 @@ a {
       TX_TYPES[3].txs.then((data) => {
         const option = default_option
         option.title.text = `ARK ${TX_TYPES[3].label} Fees`
-        option.series[0].name = TX_TYPES[3].label
 
         data.forEach(tx => {
           const date = new Date(tx.timestamp.human).toLocaleString()
@@ -289,7 +287,6 @@ a {
       TX_TYPES[1].txs.then((data) => {
         const option = default_option
         option.title.text = `ARK ${TX_TYPES[1].label} Fees`
-        option.series[0].name = TX_TYPES[1].label
 
         data.forEach(tx => {
           const date = new Date(tx.timestamp.human).toLocaleString()
@@ -311,7 +308,6 @@ a {
       TX_TYPES[2].txs.then((data) => {
         const option = default_option
         option.title.text = `ARK ${TX_TYPES[2].label} Fees`
-        option.series[0].name = TX_TYPES[2].label
 
         data.forEach(tx => {
           const date = new Date(tx.timestamp.human).toLocaleString()
