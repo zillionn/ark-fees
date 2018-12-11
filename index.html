@@ -250,10 +250,8 @@ a {
         option.title.text = `ARK ${TX_TYPES[0].label} Fees`
 
         data.forEach(tx => {
-          const date = formatDate(tx.timestamp)
-          const fee = formatFee(tx.fee)
-          option.xAxis.data.push(date)
-          option.series[0].data.push(fee)
+          option.xAxis.data.push( formatDate(tx.timestamp) )
+          option.series[0].data.push( formatFee(tx.fee) )
         })
 
         document.getElementById('loading').style.display = 'none'
@@ -274,10 +272,8 @@ a {
         option.title.text = `ARK ${TX_TYPES[3].label} Fees`
 
         data.forEach(tx => {
-          const date = formatDate(tx.timestamp)
-          const fee = formatFee(tx.fee)
-          option.xAxis.data.push(date)
-          option.series[0].data.push(fee)
+          option.xAxis.data.push(formatDate(tx.timestamp))
+          option.series[0].data.push(formatFee(tx.fee))
         })
 
         echarts
@@ -295,10 +291,8 @@ a {
         option.title.text = `ARK ${TX_TYPES[1].label} Fees`
 
         data.forEach(tx => {
-          const date = formatDate(tx.timestamp)
-          const fee = formatFee(tx.fee)
-          option.xAxis.data.push(date)
-          option.series[0].data.push(fee)
+          option.xAxis.data.push(formatDate(tx.timestamp))
+          option.series[0].data.push(formatFee(tx.fee))
         })
 
         echarts
@@ -316,10 +310,8 @@ a {
         option.title.text = `ARK ${TX_TYPES[2].label} Fees`
 
         data.forEach(tx => {
-          const date = formatDate(tx.timestamp)
-          const fee = formatFee(tx.fee)
-          option.xAxis.data.push(date)
-          option.series[0].data.push(fee)
+          option.xAxis.data.push(formatDate(tx.timestamp))
+          option.series[0].data.push(formatFee(tx.fee))
         })
 
         echarts
