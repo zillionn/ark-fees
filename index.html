@@ -12,8 +12,12 @@ body {
   font-family: Proxima Nova Regular,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
   color: #000;
 }
-a {
+a , h1{
   color: #ef192d;
+}
+h1 {
+  text-align: center;
+  padding-bottom: 20px;
 }
 #loading {
   width: 100%;
@@ -173,6 +177,8 @@ a {
   </script>
 </head>
 <body>
+  <div><h1>ARK Network Fees</h1></div>
+
   <div id="loading">
     <svg class="lds-spinner" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
@@ -240,14 +246,13 @@ a {
   </div>
 
   <div id="content">
-
     <div id="chart0" class="chart"></div>
     <script>
       getTransactions(0, TX_TYPES[0].limit).then((data) => {
         let option = Object.assign({}, default_option)
         option.xAxis.data = []
         option.series[0].data = []
-        option.title.text = `ARK ${TX_TYPES[0].label} Fees`
+        option.title.text = `${TX_TYPES[0].label} (last ${TX_TYPES[0].limit} transactions)`
 
         data.forEach(tx => {
           option.xAxis.data.push( formatDate(tx.timestamp) )
@@ -269,7 +274,7 @@ a {
         let option = Object.assign({}, default_option)
         option.xAxis.data = []
         option.series[0].data = []
-        option.title.text = `ARK ${TX_TYPES[3].label} Fees`
+        option.title.text = `${TX_TYPES[3].label} (last ${TX_TYPES[3].limit} transactions)`
 
         data.forEach(tx => {
           option.xAxis.data.push(formatDate(tx.timestamp))
@@ -288,7 +293,7 @@ a {
         let option = Object.assign({}, default_option)
         option.xAxis.data = []
         option.series[0].data = []
-        option.title.text = `ARK ${TX_TYPES[1].label} Fees`
+        option.title.text = `${TX_TYPES[1].label} (last ${TX_TYPES[1].limit} transactions)`
 
         data.forEach(tx => {
           option.xAxis.data.push(formatDate(tx.timestamp))
@@ -307,7 +312,7 @@ a {
         let option = Object.assign({}, default_option)
         option.xAxis.data = []
         option.series[0].data = []
-        option.title.text = `ARK ${TX_TYPES[2].label} Fees`
+        option.title.text = `${TX_TYPES[2].label} (last ${TX_TYPES[2].limit} transactions)`
 
         data.forEach(tx => {
           option.xAxis.data.push(formatDate(tx.timestamp))
