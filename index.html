@@ -246,83 +246,31 @@ h1 {
   </div>
 
   <div id="content">
-    <div id="chart0" class="chart"></div>
     <script>
-      getTransactions(0, TX_TYPES[0].limit).then((data) => {
-        let option = Object.assign({}, default_option)
-        option.xAxis.data = []
-        option.series[0].data = []
-        option.title.text = `${TX_TYPES[0].label} (last ${TX_TYPES[0].limit} transactions)`
+      for(let i = 0; i < TX_TYPES.length; i++) {
+        document.write(`<div id="chart${i}" class="chart"></div>`)
 
-        data.forEach(tx => {
-          option.xAxis.data.push( formatDate(tx.timestamp) )
-          option.series[0].data.push( formatFee(tx.fee) )
+        getTransactions(i, TX_TYPES[i].limit).then((data) => {
+          let option = Object.assign({}, default_option)
+          option.xAxis.data = []
+          option.series[0].data = []
+          option.title.text = `${TX_TYPES[i].label} (last ${TX_TYPES[i].limit} transactions)`
+
+          data.forEach(tx => {
+            option.xAxis.data.push(formatDate(tx.timestamp))
+            option.series[0].data.push(formatFee(tx.fee))
+          })
+
+          if(i == 0) {
+            document.getElementById('loading').style.display = 'none'
+            document.getElementById('content').style.display = 'block'
+          }
+
+          echarts
+            .init(document.getElementById(`chart${i}`))
+            .setOption(option)
         })
-
-        document.getElementById('loading').style.display = 'none'
-        document.getElementById('content').style.display = 'block'
-
-        echarts
-          .init(document.getElementById('chart0'))
-          .setOption(option)
-      })
-    </script>
-
-    <div id="chart3" class="chart"></div>
-    <script>
-      getTransactions(3, TX_TYPES[3].limit).then((data) => {
-        let option = Object.assign({}, default_option)
-        option.xAxis.data = []
-        option.series[0].data = []
-        option.title.text = `${TX_TYPES[3].label} (last ${TX_TYPES[3].limit} transactions)`
-
-        data.forEach(tx => {
-          option.xAxis.data.push(formatDate(tx.timestamp))
-          option.series[0].data.push(formatFee(tx.fee))
-        })
-
-        echarts
-          .init(document.getElementById('chart3'))
-          .setOption(option)
-      })
-    </script>
-
-    <div id="chart1" class="chart"></div>
-    <script>
-      getTransactions(1, TX_TYPES[1].limit).then((data) => {
-        let option = Object.assign({}, default_option)
-        option.xAxis.data = []
-        option.series[0].data = []
-        option.title.text = `${TX_TYPES[1].label} (last ${TX_TYPES[1].limit} transactions)`
-
-        data.forEach(tx => {
-          option.xAxis.data.push(formatDate(tx.timestamp))
-          option.series[0].data.push(formatFee(tx.fee))
-        })
-
-        echarts
-          .init(document.getElementById('chart1'))
-          .setOption(option)
-      })
-    </script>
-
-    <div id="chart2" class="chart"></div>
-    <script>
-      getTransactions(2, TX_TYPES[2].limit).then((data) => {
-        let option = Object.assign({}, default_option)
-        option.xAxis.data = []
-        option.series[0].data = []
-        option.title.text = `${TX_TYPES[2].label} (last ${TX_TYPES[2].limit} transactions)`
-
-        data.forEach(tx => {
-          option.xAxis.data.push(formatDate(tx.timestamp))
-          option.series[0].data.push(formatFee(tx.fee))
-        })
-
-        echarts
-          .init(document.getElementById('chart2'))
-          .setOption(option)
-      })
+      }
     </script>
 
     <div id="arkio"><a href="https://ark.io" target="_blank">ark.io</a></div>
