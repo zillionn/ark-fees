@@ -249,7 +249,7 @@ h1 {
         document.write(`<div id="chart${i}" class="chart"></div>`)
 
         getTransactions(i, TX_TYPES[i].limit).then((data) => {
-          let option = Object.assign({}, default_option)
+          const option = Object.assign({}, default_option)
           option.xAxis.data = []
           option.series[0].data = []
           option.title.text = `${TX_TYPES[i].label} (last ${TX_TYPES[i].limit} transactions)`
